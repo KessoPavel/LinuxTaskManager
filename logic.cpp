@@ -1,5 +1,6 @@
 #include "logic.h"
 #include <stdio.h>
+#include "mainwindow.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +21,7 @@ char* memoryToString(long int memory){
         return str;
     }
 
-    char * size[] = {"KB","MB","GB"};
+    const char * size[] = {"KB","MB","GB"};
     int n = 0;
 
     while (true) {
@@ -33,11 +34,11 @@ char* memoryToString(long int memory){
         else
             break;
     }
-    sprintf(str,"%d %s",memory, size[n]);
+    sprintf(str,"%ld %s",memory, size[n]);
     return str;
 }
 
-char* getPriority(int prioruty){
+const char* getPriority(int prioruty){
     if(prioruty < -5)
         return "very high";
     if(prioruty < 0)

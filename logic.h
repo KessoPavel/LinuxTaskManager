@@ -4,7 +4,7 @@
 
 
 char* memoryToString(long int);
-char* getPriority(int);
+const char* getPriority(int);
 bool equals(int *, int *, int, int);
 
 

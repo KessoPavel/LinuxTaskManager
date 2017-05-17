@@ -16,13 +16,15 @@ SOURCES += main.cpp\
     process.cpp \
     logic.cpp \
     mainwindow.cpp \
-    proctablemodel.cpp
+    proctablemodel.cpp \
+    rehreshthread.cpp
 
 HEADERS  += \
     process.h \
     logic.h \
     mainwindow.h \
-    proctablemodel.h
+    proctablemodel.h \
+    rehreshthread.h
 
 FORMS    += \
     mainwindow.ui

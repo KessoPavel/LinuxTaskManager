@@ -1,31 +1,28 @@
 #include "proctablemodel.h"
 #include "logic.h"
 
-ProcTableModel::ProcTableModel()
-{
+ProcTableModel::ProcTableModel() {
 
 }
 
-ProcTableModel::ProcTableModel(process ** proc, int n,QObject * parent): QAbstractTableModel(parent)
-{
+ProcTableModel::ProcTableModel(process ** proc, int n,QObject * parent): QAbstractTableModel(parent) {
     this->procList = QList<process*>();
     for(int i = 0; i < n; i++){
         this->procList.push_back(proc[i]);
     }
 }
 
-int ProcTableModel::rowCount(const QModelIndex &parent) const
-{
+int ProcTableModel::rowCount(const QModelIndex &parent) const {
+    Q_UNUSED(parent)
     return procList.size();
 }
 
-int ProcTableModel::columnCount(const QModelIndex &parent) const
-{
+int ProcTableModel::columnCount(const QModelIndex &parent) const {
+    Q_UNUSED(parent)
     return 8;
 }
 
-QVariant ProcTableModel::data(const QModelIndex &index, int role) const
-{
+QVariant ProcTableModel::data(const QModelIndex &index, int role) const {
     QString unswer;
     if(role == Qt::DisplayRole){
         switch (index.column()) {
@@ -61,15 +58,48 @@ QVariant ProcTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-Qt::ItemFlags ProcTableModel::flags(const QModelIndex &index) const
+QVariant ProcTableModel::getData(int row, int col)
 {
+    QString unswer;
+
+    switch (col) {
+    case 0:
+        unswer = QString(this->procList.at(row)->name);
+        break;
+    case 1:
+        unswer = QString::number(this->procList.at(row)->pid);
+        break;
+    case 2:
+        unswer = QString::number(this->procList.at(row)->ppid);
+        break;
+    case 3:
+        unswer = QString(getPriority(this->procList.at(row)->priority));
+        break;
+    case 4:
+        unswer = QString::number((this->procList.at(row)->cpu)) + "%";
+        break;
+    case 5:
+        unswer = QString(this->procList.at(row)->state);
+        break;
+    case 6:
+        unswer = QString(memoryToString(this->procList.at(row)->memory));
+        break;
+    case 7:
+        unswer = QString(this->procList.at(row)->owner);
+        break;
+    default:
+        break;
+    }
+    return QVariant(unswer);
+}
+
+Qt::ItemFlags ProcTableModel::flags(const QModelIndex &index) const {
     if(!index.isValid())
         return Qt::ItemIsEnabled;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-bool ProcTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
+bool ProcTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if(index.isValid() && role == Qt::EditRole){
         switch (index.column()) {
         case 3:
@@ -94,8 +124,7 @@ bool ProcTableModel::setData(const QModelIndex &index, const QVariant &value, in
     return false;
 }
 
-QVariant ProcTableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
+QVariant ProcTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
 
     if (role != Qt::DisplayRole)
         return QVariant();
