@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 
 
 char* memoryToString(long int memory){
@@ -316,6 +317,36 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
         answer[i] = finalProcess[i];
     }
     free(finalProcess);
+    return answer;
+}
+
+
+process ** filter(process ** proc, int * size, char * filter) {
+    int filterSize = strlen(filter);
+    if(filterSize == 0){
+        return proc;
+    }
+
+    process ** newProc = (process**)malloc(*(size)*sizeof(process*));
+    int newSize = 0;
+
+    for(int i = 0; i < *size; i++){
+        if(strncasecmp(proc[i]->name,filter,filterSize) == 0){
+            newProc[newSize] = proc[i];
+            newSize++;
+        }
+    }
+
+    process ** answer = (process**)malloc(newSize * sizeof(process*));
+    *size = newSize;
+
+    for(int i =0; i < *size; i++){
+        answer[i] = newProc[i];
+    }
+
+    free(newProc);
+    free(proc);
+
     return answer;
 }
 

@@ -16,6 +16,13 @@
     <height>600</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>KacstLetter</family>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -86,13 +93,6 @@
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
-         <widget class="QTableView" name="tableView">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -126,12 +126,45 @@
           </item>
          </layout>
         </item>
+        <item row="1" column="0">
+         <widget class="QTableView" name="tableView">
+          <property name="font">
+           <font>
+            <family>Ubuntu</family>
+            <pointsize>10</pointsize>
+            <italic>false</italic>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::SolidLine</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>CPU</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3"/>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -148,11 +181,65 @@
      <x>0</x>
      <y>0</y>
      <width>996</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>view</string>
+    </property>
+    <widget class="QMenu" name="UsersFilter">
+     <property name="title">
+      <string>user</string>
+     </property>
+     <addaction name="MyProcess"/>
+     <addaction name="RootProcess"/>
+     <addaction name="Allprocess"/>
+    </widget>
+    <widget class="QMenu" name="StateFilter">
+     <property name="title">
+      <string>state</string>
+     </property>
+     <addaction name="SleepingProcess"/>
+     <addaction name="RunningProcess"/>
+     <addaction name="AllProcess"/>
+    </widget>
+    <addaction name="UsersFilter"/>
+    <addaction name="StateFilter"/>
+   </widget>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="MyProcess">
+   <property name="text">
+    <string>My process</string>
+   </property>
+  </action>
+  <action name="RootProcess">
+   <property name="text">
+    <string>Root process</string>
+   </property>
+  </action>
+  <action name="SleepingProcess">
+   <property name="text">
+    <string>Slepping process</string>
+   </property>
+  </action>
+  <action name="RunningProcess">
+   <property name="text">
+    <string>Running process</string>
+   </property>
+  </action>
+  <action name="AllProcess">
+   <property name="text">
+    <string>All process</string>
+   </property>
+  </action>
+  <action name="Allprocess">
+   <property name="text">
+    <string>All process</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

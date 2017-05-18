@@ -9,10 +9,16 @@
 CubeMainWindow::CubeMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
+
+    initialization("10171");
+
     for(int i = 0; i < 8; i++){
         this->flags[i] = 1;
         this->sotrFlag[i] = 0;
     }
+    this->userFilter = ALL_USERS;
+    this->stateFilter = ALL;
+    this->nfilter  = (char*)calloc(150,sizeof(char));
 
     ui->setupUi(this);
     this->pids = getPids(&n);
@@ -25,6 +31,13 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
 
     connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshTable()));
     connect(this->ui->tableView->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sortTable(int)));
+    //filters
+    connect(this->ui->MyProcess,SIGNAL(triggered(bool)),this,SLOT(setMyProcessFilter(bool)));
+    connect(this->ui->RootProcess,SIGNAL(triggered(bool)),this,SLOT(setRootProcessFilter(bool)));
+    connect(this->ui->Allprocess,SIGNAL(triggered(bool)),this,SLOT(setAllProcessFilter(bool)));
+    connect(this->ui->SleepingProcess,SIGNAL(triggered(bool)),this,SLOT(setSleepingStareFilter(bool)));
+    connect(this->ui->RunningProcess,SIGNAL(triggered(bool)),this,SLOT(setRunningStateFilter(bool)));
+    connect(this->ui->AllProcess,SIGNAL(triggered(bool)),this,SLOT(setAllStateFilter(bool)));
 
     this->rehreshThread->start();
 }
@@ -35,7 +48,8 @@ CubeMainWindow::~CubeMainWindow() {
 
 void CubeMainWindow::printTable() {
 
-    this->proc = setFilter(this->proc,&this->n,THIS_USER,ALL);
+    this->proc = setFilter(this->proc,&this->n,this->userFilter,this->stateFilter);
+    this->proc = filter(this->proc,&(this->n),this->nfilter);
 
     for (int i = 0; i < 8; i++){
        if (this->sotrFlag[i] == 1){
@@ -73,8 +87,9 @@ void CubeMainWindow::updateTable() {
     ProcTableModel * model = (ProcTableModel *)this->ui->tableView->model();
     int pid = model->getData(ind.row(),1).toInt();
 
+    int t = this->n;
     this->pids = getPids(&n);
-    this->proc = getProcess(pids, n);
+    this->proc = updateProcess(this->proc,t,this->pids,this->n);
 
     this->printTable();
 
@@ -103,4 +118,40 @@ void CubeMainWindow::sortTable(int coll){
     }
     this->sotrFlag[coll] = 1;
     sort(this->proc,this->n, coll, this->flags[coll]);
+    this->updateTable();
+}
+
+void CubeMainWindow::setMyProcessFilter(bool) {
+    this->userFilter = THIS_USER;
+    this->updateTable();
+}
+
+void CubeMainWindow::setRootProcessFilter(bool) {
+    this->userFilter = ROOT;
+    this->updateTable();
+}
+
+void CubeMainWindow::setAllProcessFilter(bool) {
+    this->userFilter = ALL_USERS;
+    this->updateTable();
+}
+
+void CubeMainWindow::setSleepingStareFilter(bool) {
+    this->stateFilter = SLEEPING;
+    this->updateTable();
+}
+
+void CubeMainWindow::setRunningStateFilter(bool) {
+    this->stateFilter = RUNNING;
+    this->updateTable();
+}
+
+void CubeMainWindow::setAllStateFilter(bool) {
+    this->stateFilter = ALL;
+    this->updateTable();
+}
+
+void CubeMainWindow::on_lineEdit_textChanged(const QString &filter) {
+    strcpy(this->nfilter,filter.toStdString().c_str());
+    this->updateTable();
 }

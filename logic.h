@@ -12,6 +12,7 @@ int getPidNumber(int *, int, int);
 int getPidNumber(process **, int, int);
 void sort(process **, int, int, int);
 process ** setFilter(process **, int*, USER_FILTER, STATE_FILTER);
+process ** filter(process **, int*, char*);
 
 #endif // LOGIC
 

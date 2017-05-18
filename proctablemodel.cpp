@@ -1,5 +1,7 @@
 #include "proctablemodel.h"
 #include "logic.h"
+#include <QColor>
+#include <QBrush>
 
 ProcTableModel::ProcTableModel() {
 
@@ -54,6 +56,13 @@ QVariant ProcTableModel::data(const QModelIndex &index, int role) const {
             break;
         }
         return QVariant(unswer);
+    }
+    if (role == Qt::BackgroundColorRole) {
+        QColor * color = new QColor("white");
+        if(index.row() % 2 == 0){
+            color->setNamedColor("whitesmoke");
+        }
+        return QBrush(*color);
     }
     return QVariant();
 }

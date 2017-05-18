@@ -106,7 +106,11 @@ process* initialization(const char * pid){
     }
     fclose(file);
 
-    proc->cpu = (_proc(pid) *100)/(_cpu());
+    proc->procTime = _proc(pid);
+
+    proc->coreTime = _cpu();
+
+    proc->cpu = (proc->procTime * 100)/(proc->coreTime);
 
     return proc;
 }
@@ -170,7 +174,17 @@ void update(process * proc){
     fclose(file);
 
     sprintf(buff,"%d",proc->pid);
-    proc->cpu = (_proc(buff) *100)/(_cpu());
+
+    float prev_procTime = proc->procTime;
+    float prev_coreTime = proc->coreTime;
+
+    char pid[6];
+    sprintf(pid,"%d",proc->pid);
+
+    proc->procTime = _proc(pid);
+    proc->coreTime = _cpu();
+
+    proc->cpu = ((prev_procTime - proc->procTime) *100)/(prev_coreTime - proc->coreTime);
 }
 
 int* getPids(int * n){
@@ -215,13 +229,24 @@ process ** getProcess(int * pids, int n ){
     return processList;
 }
 
-void updateProcess(process** proc, int n){
-    if(proc == NULL || n < 1)
-        return;
+process ** updateProcess(process** proc, int n, int * pids, int nPids){
+    process ** answer = (process**)malloc(nPids*sizeof(process*));
 
-    for(int i = 0; i < n; i++){
-        update(proc[i]);
+    for(int i = 0; i < nPids; i++){
+        process * temp = getProces(proc, n, pids[i]);
+        if(temp == NULL) {
+            char pid[6];
+            sprintf(pid,"%d",pids[i]);
+            temp = initialization(pid);
+            answer[i] = temp;
+        }
+        else {
+            update(temp);
+            answer[i] = temp;
+        }
     }
+    free(proc);
+    return answer;
 }
 
 float _proc(const char* pid){
