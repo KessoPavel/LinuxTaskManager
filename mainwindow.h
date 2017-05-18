@@ -22,7 +22,8 @@ private:
     int * pids;
     pthread_t mainthread;
     ProcTableModel * model;
-
+    int flags[8] = {1,1,1,1,1,1,1,1};
+    int sotrFlag[8] = {0,0,0,0,0,0,0,0};
 public:
     explicit CubeMainWindow(QWidget *parent = 0);
     ~CubeMainWindow();
@@ -37,6 +38,7 @@ private slots:
 public slots:
     void rehreshTable();
 
+    void sortTable(int);
 
 private:
     Ui::MainWindow *ui;
