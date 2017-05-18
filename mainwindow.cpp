@@ -9,9 +9,15 @@
 CubeMainWindow::CubeMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
+    for(int i = 0; i < 8; i++){
+        this->flags[i] = 1;
+        this->sotrFlag[i] = 0;
+    }
+
     ui->setupUi(this);
     this->pids = getPids(&n);
     this->proc = getProcess(pids, n);
+
 
     this->printTable();
 
@@ -20,10 +26,7 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshTable()));
     connect(this->ui->tableView->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sortTable(int)));
 
-
     this->rehreshThread->start();
-
-    //pthread_create(&this->mainthread,NULL,rehreshThread,this);
 }
 
 CubeMainWindow::~CubeMainWindow() {
@@ -31,6 +34,8 @@ CubeMainWindow::~CubeMainWindow() {
 }
 
 void CubeMainWindow::printTable() {
+
+    this->proc = setFilter(this->proc,&this->n,THIS_USER,ALL);
 
     for (int i = 0; i < 8; i++){
        if (this->sotrFlag[i] == 1){
@@ -56,8 +61,9 @@ void CubeMainWindow::printTable() {
 
 void CubeMainWindow::on_pushButton_clicked() {
     QModelIndex ind = this->ui->tableView->currentIndex();
-    //TODO pid from table!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-    kill(this->pids[ind.row()],SIGKILL);
+    ProcTableModel * model = (ProcTableModel *)this->ui->tableView->model();
+    int pid = model->getData(ind.row(),1).toInt();
+    kill(pid,SIGKILL);
     this->updateTable();
 }
 
@@ -73,14 +79,11 @@ void CubeMainWindow::updateTable() {
     this->printTable();
 
     int nPid = getPidNumber(this->proc, this->n, pid);
-    //получить номер столюца с пидом
-    //либо поиск в массиве пидов
-    //либо поиск в моделе
-
 
     this->ui->tableView->setCurrentIndex(this->ui->tableView->model()->index(nPid,2));
 
-    if (nPid != -1){
+
+    if (nPid != -1 && this->ui->tableView->hasFocus()) {
         this->ui->tableView->setFocus();
     }
 }
@@ -100,5 +103,4 @@ void CubeMainWindow::sortTable(int coll){
     }
     this->sotrFlag[coll] = 1;
     sort(this->proc,this->n, coll, this->flags[coll]);
-
 }

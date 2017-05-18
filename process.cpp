@@ -282,3 +282,11 @@ int _cpu(){
     fclose(file);
     return cputime;
 }
+
+process * getProces(process ** proc, int n, int pid) {
+    for(int i = 0; i < n; i++){
+        if(proc[i]->pid == pid)
+            return proc[i];
+    }
+    return NULL;
+}

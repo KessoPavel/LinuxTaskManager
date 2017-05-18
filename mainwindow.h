@@ -22,8 +22,8 @@ private:
     int * pids;
     pthread_t mainthread;
     ProcTableModel * model;
-    int flags[8] = {1,1,1,1,1,1,1,1};
-    int sotrFlag[8] = {0,0,0,0,0,0,0,0};
+    int flags[8];
+    int sotrFlag[8];
 public:
     explicit CubeMainWindow(QWidget *parent = 0);
     ~CubeMainWindow();

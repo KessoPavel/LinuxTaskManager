@@ -22,5 +22,7 @@ process ** getProcess(int *, int);
 
 void updateProcess(process**, int);
 
+process * getProces(process **, int, int);
+
 #endif // PROCESS
 
