@@ -8,6 +8,6 @@ RehreshThread::RehreshThread(CubeMainWindow * mainWindow) {
 void RehreshThread::run() {
     while(true){
         emit this->rehresh();
-        usleep(2000000);
+        usleep(1000000);
     }
 }

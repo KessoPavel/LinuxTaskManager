@@ -14,6 +14,10 @@
 #include <pthread.h>
 #include <string.h>
 
+struct inform {
+    int pid;
+    char user[100];
+} inf;
 
 char* memoryToString(long int memory){
     char * str = (char*)malloc(10);
@@ -239,14 +243,15 @@ void sort(process ** proc, int n, int coll, int less) {
 
 process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FILTER s_filter) {
     int n = *size;
+    if(size == 0){
+        return proc;
+    }
     process ** newProc = (process**)malloc(n*sizeof(process*));
     int newN = 0;
-
     switch (u_filter) {
-    case THIS_USER: {
-        int thisPid = getpid();
+    case THIS_USER: {        
         char user[100];
-        strcpy(user,getProces(proc, n, thisPid)->owner);
+        strcpy(user,getProces(proc, n, inf.pid)->owner);
         for(int i = 0; i < n; i++){
             if(strcmp(proc[i]->owner, user) == 0){
                 newProc[newN] = proc[i];
@@ -274,7 +279,6 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
     default:
         break;
     }
-
     process ** finalProcess = (process**)malloc(newN*sizeof(process*));
     int finalN = 0;
 
@@ -307,10 +311,8 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
     default:
         break;
     }
-
     free(newProc);
     free(proc);
-
     *size = finalN;
     process ** answer = (process**)malloc((*size)*sizeof(process*));
     for(int i = 0; i < *size; i++){
@@ -350,3 +352,7 @@ process ** filter(process ** proc, int * size, char * filter) {
     return answer;
 }
 
+
+void init() {
+    inf.pid = getpid();
+}

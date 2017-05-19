@@ -4,13 +4,18 @@
 #include <signal.h>
 #include <unistd.h>
 #include <pthread.h>
+#include "processorlogic.h"
 #include "rehreshthread.h"
 
 CubeMainWindow::CubeMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
 
-    initialization("10171");
+    init();
+    processorInfinit();
+
+    this->cpu_used = (CPU*)malloc(sizeof(CPU)*1);
+    cpuInit(this->cpu_used);
 
     for(int i = 0; i < 8; i++){
         this->flags[i] = 1;
@@ -30,6 +35,7 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     this->rehreshThread = new RehreshThread(this);
 
     connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshTable()));
+    //connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshUsegeCPU()));
     connect(this->ui->tableView->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sortTable(int)));
     //filters
     connect(this->ui->MyProcess,SIGNAL(triggered(bool)),this,SLOT(setMyProcessFilter(bool)));
@@ -47,19 +53,17 @@ CubeMainWindow::~CubeMainWindow() {
 }
 
 void CubeMainWindow::printTable() {
-
-    this->proc = setFilter(this->proc,&this->n,this->userFilter,this->stateFilter);
+    int temp = this->n;
+    this->proc = setFilter(this->proc,&temp,this->userFilter,this->stateFilter);
+    this->n = temp;
     this->proc = filter(this->proc,&(this->n),this->nfilter);
-
     for (int i = 0; i < 8; i++){
        if (this->sotrFlag[i] == 1){
            sort(this->proc,this->n,i,this->flags[i]);
        }
     }
-
     model = new  ProcTableModel(this->proc, this->n, NULL);
     ui->tableView->setModel(model);
-
     ui->tableView->verticalHeader()->hide();
 
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -68,10 +72,6 @@ void CubeMainWindow::printTable() {
     ui->tableView->setAutoScroll(false);
     ui->tableView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
 }
-
-
-
-
 
 void CubeMainWindow::on_pushButton_clicked() {
     QModelIndex ind = this->ui->tableView->currentIndex();
@@ -82,7 +82,6 @@ void CubeMainWindow::on_pushButton_clicked() {
 }
 
 void CubeMainWindow::updateTable() {
-
     QModelIndex ind = this->ui->tableView->currentIndex();
     ProcTableModel * model = (ProcTableModel *)this->ui->tableView->model();
     int pid = model->getData(ind.row(),1).toInt();
@@ -108,7 +107,23 @@ void CubeMainWindow::on_pushButton_2_clicked() {
 }
 
 void CubeMainWindow::rehreshTable(){
-    this->updateTable();
+    switch(this->ui->tabWidget->currentIndex()){
+    case 0: {
+
+        this->updateTable();
+        break;
+    }
+    case 1: {
+        this->ui->processorName->setText(getProcessorName());
+        this->ui->frequency->setText(getProcessorFrequency());
+        this->ui->cores->setText(QString::number(getProcessorNumberOfCore()));
+        int usage = CPU_usage(this->cpu_used);
+        this->ui->progressBar->setValue(usage);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void CubeMainWindow::sortTable(int coll){

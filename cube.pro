@@ -17,16 +17,20 @@ SOURCES += main.cpp\
     logic.cpp \
     mainwindow.cpp \
     proctablemodel.cpp \
-    rehreshthread.cpp
+    rehreshthread.cpp \
+    processorlogic.cpp
 
 HEADERS  += \
     process.h \
     logic.h \
     mainwindow.h \
     proctablemodel.h \
-    rehreshthread.h
+    rehreshthread.h \
+    processorlogic.h
 
 FORMS    += \
     mainwindow.ui
 
 DISTFILES +=
+
+CONFIG += console

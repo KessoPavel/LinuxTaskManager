@@ -5,6 +5,7 @@
 #include "process.h"
 #include "proctablemodel.h"
 #include "logic.h"
+#include "processorlogic.h"
 #include <QStandardItemModel>
 
 class RehreshThread;
@@ -28,6 +29,8 @@ private:
     USER_FILTER userFilter;
     STATE_FILTER stateFilter;
     char * nfilter;
+    CPU * cpu_used;
+
 
 public:
     explicit CubeMainWindow(QWidget *parent = 0);

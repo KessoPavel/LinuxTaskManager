@@ -16,7 +16,6 @@ float _proc(const char*);
 int _cpu();
 
 process* initialization(const char * pid){
-
     process * proc = (process*)malloc(sizeof(process));
     char path[20] = "/proc/";
     strcat(path,pid);

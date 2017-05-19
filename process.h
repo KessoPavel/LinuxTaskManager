@@ -1,5 +1,6 @@
 #ifndef PROCESS
 #define PROCESS
+#include <QDebug>
 
 struct process{
     int pid;

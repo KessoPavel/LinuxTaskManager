@@ -5,6 +5,10 @@
 enum USER_FILTER {THIS_USER,ROOT,ALL_USERS};
 enum STATE_FILTER {RUNNING,SLEEPING,ALL};
 
+
+
+
+void init();
 char* memoryToString(long int);
 const char* getPriority(int);
 bool equals(int *, int *, int, int);
