@@ -3,15 +3,20 @@
 #include "logic.h"
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <pthread.h>
 #include "processorlogic.h"
 #include "rehreshthread.h"
+#include "raminfo.h"
 
 CubeMainWindow::CubeMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
 
+    this->setWindowTitle("Cube");
     init();
+    initMem();
+    //initOWNER();
     processorInfinit();
 
     this->cpu_used = (CPU*)malloc(sizeof(CPU)*1);
@@ -35,9 +40,8 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     this->rehreshThread = new RehreshThread(this);
 
     connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshTable()));
-    //connect(this->rehreshThread,SIGNAL(rehresh()),this,SLOT(rehreshUsegeCPU()));
     connect(this->ui->tableView->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sortTable(int)));
-    //filters
+
     connect(this->ui->MyProcess,SIGNAL(triggered(bool)),this,SLOT(setMyProcessFilter(bool)));
     connect(this->ui->RootProcess,SIGNAL(triggered(bool)),this,SLOT(setRootProcessFilter(bool)));
     connect(this->ui->Allprocess,SIGNAL(triggered(bool)),this,SLOT(setAllProcessFilter(bool)));
@@ -53,14 +57,12 @@ CubeMainWindow::~CubeMainWindow() {
 }
 
 void CubeMainWindow::printTable() {
-    int temp = this->n;
-    this->proc = setFilter(this->proc,&temp,this->userFilter,this->stateFilter);
-    this->n = temp;
+    this->proc = setFilter(this->proc,&this->n,this->userFilter,this->stateFilter);
     this->proc = filter(this->proc,&(this->n),this->nfilter);
     for (int i = 0; i < 8; i++){
-       if (this->sotrFlag[i] == 1){
-           sort(this->proc,this->n,i,this->flags[i]);
-       }
+        if (this->sotrFlag[i] == 1){
+            sort(this->proc,this->n,i,this->flags[i]);
+        }
     }
     model = new  ProcTableModel(this->proc, this->n, NULL);
     ui->tableView->setModel(model);
@@ -115,10 +117,32 @@ void CubeMainWindow::rehreshTable(){
     }
     case 1: {
         this->ui->processorName->setText(getProcessorName());
-        this->ui->frequency->setText(getProcessorFrequency());
         this->ui->cores->setText(QString::number(getProcessorNumberOfCore()));
         int usage = CPU_usage(this->cpu_used);
         this->ui->progressBar->setValue(usage);
+
+        int totalRam = getMemTotal();
+
+        int gb = (totalRam / 1024) / 1024;
+        int mb = (totalRam-gb*1024*1024) /1024;
+        int kb = (totalRam - (gb*1024*1024+mb*1024));
+
+        char Ram[50];
+        sprintf(Ram,"%d Gb %d Mb %d Kb",gb,mb,kb);
+
+        this->ui->TotalRAM->setText(Ram);
+
+        int freeRam = getMemFree();
+        gb = (freeRam / 1024) / 1024;
+        mb = (freeRam-gb*1024*1024) /1024;
+        kb = (freeRam - (gb*1024*1024+mb*1024));
+
+        sprintf(Ram,"%d Gb %d Mb %d Kb",gb,mb,kb);
+
+        this->ui->FreeRAM->setText(Ram);
+
+        this->ui->progressBar_2->setValue((totalRam - freeRam)*100 / totalRam);
+
         break;
     }
     default:

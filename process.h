@@ -13,6 +13,8 @@ struct process{
     long int memory;
     float procTime;
     float coreTime;
+//    char ** fd;
+//    int fdn;
 };
 
 process* initialization(const char*);

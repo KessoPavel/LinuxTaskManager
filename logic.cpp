@@ -68,7 +68,9 @@ bool equals(int *p1, int *p2, int n1, int n2){
 
 int getPidNumber(process ** proc, int n, int pid) {
     for(int i = 0; i < n; i++){
-        if(proc[i]->pid == pid)
+        if(proc[i] == NULL)
+            continue;
+        if(proc[i]->pid == pid)//dfgh
             return i;
     }
     return -1;
@@ -78,7 +80,13 @@ void sort(process ** proc, int n, int coll, int less) {
     switch(coll){
     case 0: { //name
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(strcmp(proc[i]->name,proc[j]->name) >= 0){
                         process * temp = proc[i];
@@ -98,7 +106,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 1: { //pid
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(proc[i]->pid >= proc[j]->pid){
                         process * temp = proc[i];
@@ -118,7 +132,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 2: { //ppid
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(proc[i]->ppid >= proc[j]->ppid){
                         process * temp = proc[i];
@@ -138,7 +158,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 3: { //priority
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(proc[i]->priority >= proc[j]->priority){
                         process * temp = proc[i];
@@ -158,7 +184,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 4:{ //cpu
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(proc[i]->cpu >= proc[j]->cpu){
                         process * temp = proc[i];
@@ -178,7 +210,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 5:{//state
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(strcmp(proc[i]->state,proc[j]->state) >= 0){
                         process * temp = proc[i];
@@ -198,7 +236,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 6:{ //mem
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(proc[i]->memory >= proc[j]->memory){
                         process * temp = proc[i];
@@ -218,7 +262,13 @@ void sort(process ** proc, int n, int coll, int less) {
     }
     case 7:{
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL){
+                continue;
+            }
             for(int j = i; j < n; j++){
+                if(proc[j] == NULL){
+                    continue;
+                }
                 if(less == 1){
                     if(strcmp(proc[i]->owner,proc[j]->owner) >= 0){
                         process * temp = proc[i];
@@ -253,6 +303,8 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
         char user[100];
         strcpy(user,getProces(proc, n, inf.pid)->owner);
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL)
+                continue;
             if(strcmp(proc[i]->owner, user) == 0){
                 newProc[newN] = proc[i];
                 newN++;
@@ -269,6 +321,8 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
     }
     case ROOT: {
         for(int i = 0; i < n; i++){
+            if(proc[i] == NULL)
+                continue;
             if(strcmp(proc[i]->owner, "root") == 0){
                 newProc[newN] = proc[i];
                 newN++;
@@ -285,6 +339,8 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
     switch (s_filter) {
     case RUNNING: {
         for(int i = 0; i < newN; i++){
+            if(proc[i] == NULL)
+                continue;
             if(strcmp(newProc[i]->state, "running") == 0){
                 finalProcess[finalN] = newProc[i];
                 finalN++;
@@ -294,6 +350,8 @@ process **setFilter(process ** proc, int * size, USER_FILTER u_filter, STATE_FIL
     }
     case SLEEPING: {
         for(int i = 0; i < newN; i++){
+            if(proc[i] == NULL)
+                continue;
             if(strcmp(newProc[i]->state, "sleeping") == 0){
                 finalProcess[finalN] = newProc[i];
                 finalN++;
