@@ -112,48 +112,6 @@ process* initialization(const char * pid){
     proc->cpu = (proc->procTime * 100)/(proc->coreTime);
 
     return proc;
-    //--------------------------------------------
-    /*strcpy(path,"/proc/");
-    strcat(path,pid);
-    strcat(path,"/fd/");
-
-    char * temp;
-    char tt[50];
-    strcpy(tt,path);
-    strcat(tt,"0");
-    file = fopen(tt,"r");
-    if(file == NULL){
-        proc->fd = NULL;
-        return proc;
-    }
-
-    DIR * fddir = opendir(path);
-    int size = 20;
-    int m = 0;
-    struct dirent * dir;
-    char ** fd = (char**)malloc(size*sizeof(char*));
-    while(true){
-        dir = readdir(fddir);
-        if(dir != NULL){
-            temp = dir->d_name;
-            strcpy(tt,path);
-            strcat(tt,temp);
-            readlink(tt,buff,100);
-            fd[m] = (char*)malloc(100*sizeof(char));
-            strcpy(fd[m],buff);
-            m++;
-        }
-        else{
-            break;
-        }
-        if(m == size){
-            size += 10;
-            fd = (char**)realloc(fd,size*sizeof(char*));
-        }
-    }
-
-    proc->fd = fd;
-    return proc;*/
 }
 
 void update(process * proc){

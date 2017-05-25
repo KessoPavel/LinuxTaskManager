@@ -64,6 +64,11 @@ QVariant ProcTableModel::data(const QModelIndex &index, int role) const {
         }
         return QBrush(*color);
     }
+    if( role == Qt::TextAlignmentRole){
+        if(index.column() == 0 || index.column() == 1 || index.column() == 2 )
+            return Qt::AlignLeft;
+        return Qt::AlignCenter;
+    }
     return QVariant();
 }
 

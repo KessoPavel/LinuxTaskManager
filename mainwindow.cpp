@@ -16,11 +16,12 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
 
+    ui->setupUi(this);
+
     this->setWindowTitle("Cube");
     init();
     initMem();
     processorInfinit();
-
 
     this->cpux = new QLabel *[getProcessorNumberOfCore()];
     this->cpuxP = new QProgressBar *[getProcessorNumberOfCore()];
@@ -30,6 +31,11 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
         this->cpux[i] = new QLabel(c);
         this->cpux[i]->setMinimumWidth(40);
         this->cpuxP[i] = new QProgressBar();
+    }
+
+    for(int i = 0; i < getProcessorNumberOfCore(); i++){
+        this->ui->cpux->addWidget(this->cpux[i]);
+        this->ui->cpux->addWidget(this->cpuxP[i]);
     }
 
     this->cpu_used = (CPU*)malloc(sizeof(CPU)*1);
@@ -43,7 +49,6 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     this->stateFilter = ALL;
     this->nfilter  = (char*)calloc(150,sizeof(char));
 
-    ui->setupUi(this);
     this->pids = getPids(&n);
     this->proc = getProcess(pids, n);
 
@@ -66,6 +71,7 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
 }
 
 CubeMainWindow::~CubeMainWindow() {
+    
     delete ui;
 }
 
@@ -132,17 +138,9 @@ void CubeMainWindow::rehreshTable(){
         int* usage = CPU_usage(this->cpu_used);
         this->ui->progressBar->setValue(usage[0]);
 
-        if(!this->ui->cpux->children().size()){
-            for(int i = 0; i < getProcessorNumberOfCore(); i++){
-                this->ui->cpux->addWidget(this->cpux[i]);
-                this->ui->cpux->addWidget(this->cpuxP[i]);
-            }
-        }
-
         for(int i = 0; i < getProcessorNumberOfCore(); i++){
             this->cpuxP[i]->setValue(usage[i + 1]);
         }
-
 
         int totalRam = getMemTotal();
 
@@ -166,6 +164,7 @@ void CubeMainWindow::rehreshTable(){
 
         this->ui->progressBar_2->setValue((totalRam - freeRam)*100 / totalRam);
 
+        free(usage);
         break;
     }
     default:
