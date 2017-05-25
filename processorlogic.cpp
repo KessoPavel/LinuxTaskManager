@@ -13,7 +13,6 @@
 
 struct processoriInf {
     char name[100];
-    char frequency[10];
     int numberOfCores;
 }processor;
 
@@ -29,7 +28,6 @@ void processorInfinit()
     for(int i = 0; i < 16;i++) {
         if(fscanf(file,"%s",buff)==EOF){
             strcpy(processor.name,"");
-            strcpy(processor.frequency,"");
             processor.numberOfCores = 0;
             return;
         }
@@ -38,23 +36,8 @@ void processorInfinit()
     fgets(buff,100,file);
     strncpy(processor.name,buff,strlen(buff) - 1);
 
-    for(int i = 0; i < 9; i++) {
+    for(int i = 0; i < 30; i++) {
         if(fscanf(file,"%s",buff)==EOF){
-            strcpy(processor.frequency,"");
-            processor.numberOfCores = 0;
-            return;
-        }
-    }
-
-    if(fscanf(file,"%s",processor.frequency)==EOF){
-        strcpy(processor.frequency,"");
-        processor.numberOfCores = 0;
-        return;
-    }
-
-    for(int i = 0; i< 20; i++) {
-        if(fscanf(file,"%s",buff)==EOF){
-            strcpy(processor.frequency,"");
             processor.numberOfCores = 0;
             return;
         }
@@ -71,11 +54,8 @@ int getProcessorNumberOfCore() {
     return processor.numberOfCores;
 }
 
-char *getProcessorFrequency() {
-    return processor.frequency;
-}
-
-int CPU_usage(CPU * mem) {
+int* CPU_usage(CPU * mem) {
+    int * answer = (int*)malloc((processor.numberOfCores + 1) * sizeof(int));
     unsigned long long cpu = 0;
     unsigned long long nice = 0;
     unsigned long long system = 0;
@@ -84,21 +64,50 @@ int CPU_usage(CPU * mem) {
     FILE *f = fopen("/proc/stat", "r");
     if (fscanf(f, "cpu %llu %llu %llu %llu", &cpu, &nice, &system, &idle) < 4)
     {
-        fclose(f);
-        return -1;
+        return NULL;
     }
-    fclose(f);
 
     unsigned long long new_busy = cpu + nice + system;
     unsigned long long new_work = new_busy + idle;
 
     double usage = 100.0 * (new_busy - mem->busy ) / (double) (new_work - mem->work);
 
+    answer[0] = (int)usage;
 
     mem->busy = new_busy;
     mem->work = new_work;
 
-    return (int) usage;
+    char buff[100];
+    for(int i = 0; i < processor.numberOfCores; i++ ){
+        char cpuX[4];
+        sprintf(cpuX,"cpu%d",i);
+        while(1){
+            if(fscanf(f,"%s",buff)==EOF){
+                fclose(f);
+                return answer;
+            }
+            if(!strcmp(buff,cpuX)){
+                if (fscanf(f, "%llu %llu %llu %llu", &cpu, &nice, &system, &idle) < 4){
+                    fclose(f);
+                    return answer;
+                }
+                new_busy = cpu + nice + system;
+                new_work = new_busy + idle;
+
+                usage = 100.0 * (new_busy - mem->cpux[i].busy ) / (double) (new_work - mem->cpux[i].work);
+
+                mem->cpux[i].busy = new_busy;
+                mem->cpux[i].work = new_work;
+
+                answer[i + 1] = (int)usage;
+
+                break;
+            }
+        }
+    }
+    fclose(f);
+
+    return answer;
 }
 
 void cpuInit(CPU * mem) {
@@ -113,11 +122,37 @@ void cpuInit(CPU * mem) {
         fclose(f);
         return;
     }
-    fclose(f);
 
     unsigned long long new_busy = cpu + nice + system;
     unsigned long long new_work = new_busy + idle;
 
     mem->busy = new_busy;
     mem->work = new_work;
+
+    mem->cpux = (CPU*)malloc(processor.numberOfCores * sizeof(CPU));
+
+    char buff[100];
+    for(int i = 0; i < processor.numberOfCores; i++ ){
+        char cpuX[4];
+        sprintf(cpuX,"cpu%d",i);
+        while(1){
+            if(fscanf(f,"%s",buff)==EOF){
+                fclose(f);
+                return;
+            }
+            if(!strcmp(buff,cpuX)){
+                if (fscanf(f, "%llu %llu %llu %llu", &cpu, &nice, &system, &idle) < 4){
+                    fclose(f);
+                    return;
+                }
+                new_busy = cpu + nice + system;
+                new_work = new_busy + idle;
+                mem->cpux[i].busy = new_busy;
+                mem->cpux[i].work = new_work;
+                mem->cpux[i].cpux = NULL;
+                break;
+            }
+        }
+    }
+    fclose(f);
 }

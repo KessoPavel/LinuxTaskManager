@@ -4,7 +4,10 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
+#include <QLayoutItem>
 #include "processorlogic.h"
 #include "rehreshthread.h"
 #include "raminfo.h"
@@ -16,8 +19,18 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     this->setWindowTitle("Cube");
     init();
     initMem();
-    //initOWNER();
     processorInfinit();
+
+
+    this->cpux = new QLabel *[getProcessorNumberOfCore()];
+    this->cpuxP = new QProgressBar *[getProcessorNumberOfCore()];
+    for(int i = 0; i < getProcessorNumberOfCore(); i++ ){
+        char c[5];
+        sprintf(c,"cpu%d :", i);
+        this->cpux[i] = new QLabel(c);
+        this->cpux[i]->setMinimumWidth(40);
+        this->cpuxP[i] = new QProgressBar();
+    }
 
     this->cpu_used = (CPU*)malloc(sizeof(CPU)*1);
     cpuInit(this->cpu_used);
@@ -116,10 +129,20 @@ void CubeMainWindow::rehreshTable(){
         break;
     }
     case 1: {
-        this->ui->processorName->setText(getProcessorName());
-        this->ui->cores->setText(QString::number(getProcessorNumberOfCore()));
-        int usage = CPU_usage(this->cpu_used);
-        this->ui->progressBar->setValue(usage);
+        int* usage = CPU_usage(this->cpu_used);
+        this->ui->progressBar->setValue(usage[0]);
+
+        if(!this->ui->cpux->children().size()){
+            for(int i = 0; i < getProcessorNumberOfCore(); i++){
+                this->ui->cpux->addWidget(this->cpux[i]);
+                this->ui->cpux->addWidget(this->cpuxP[i]);
+            }
+        }
+
+        for(int i = 0; i < getProcessorNumberOfCore(); i++){
+            this->cpuxP[i]->setValue(usage[i + 1]);
+        }
+
 
         int totalRam = getMemTotal();
 

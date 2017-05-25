@@ -7,6 +7,8 @@
 #include "logic.h"
 #include "processorlogic.h"
 #include <QStandardItemModel>
+#include <QLabel>
+#include <QProgressBar>
 
 class RehreshThread;
 
@@ -30,6 +32,9 @@ private:
     STATE_FILTER stateFilter;
     char * nfilter;
     CPU * cpu_used;
+
+    QLabel ** cpux;
+    QProgressBar ** cpuxP;
 
 
 public:

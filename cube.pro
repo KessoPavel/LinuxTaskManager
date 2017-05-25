@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     proctablemodel.cpp \
     rehreshthread.cpp \
-    processorlogic.cpp
+    processorlogic.cpp \
+    raminfo.cpp
 
 HEADERS  += \
     process.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     mainwindow.h \
     proctablemodel.h \
     rehreshthread.h \
-    processorlogic.h
+    processorlogic.h \
+    raminfo.h
 
 FORMS    += \
     mainwindow.ui
