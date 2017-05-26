@@ -18,6 +18,8 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+
+
     this->setWindowTitle("Cube");
     init();
     initMem();

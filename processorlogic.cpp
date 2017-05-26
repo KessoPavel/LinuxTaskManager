@@ -19,6 +19,7 @@ struct processoriInf {
 void processorInfinit()
 {
 
+    processor.numberOfCores = 0;
     char buff[100];
     FILE * file = fopen("/proc/cpuinfo","r");
     if(file == NULL){
@@ -33,17 +34,31 @@ void processorInfinit()
         }
     }
 
-    fgets(buff,100,file);
+    if(fgets(buff,100,file) == NULL){
+        fclose(file);
+        return;
+    }
     strncpy(processor.name,buff,strlen(buff) - 1);
 
-    for(int i = 0; i < 30; i++) {
+    fclose(file);
+
+
+    file = fopen("/proc/stat", "r");
+
+    char cpuX[10];
+    sprintf(cpuX,"cpu%d",processor.numberOfCores);
+
+    while(1){
         if(fscanf(file,"%s",buff)==EOF){
-            processor.numberOfCores = 0;
+            fclose(file);
             return;
+        }
+        if(!strcmp(buff,cpuX)){
+            processor.numberOfCores++;
+            sprintf(cpuX,"cpu%d",processor.numberOfCores);
         }
     }
 
-    processor.numberOfCores = atoi(buff);
 }
 
 char *getProcessorName() {
@@ -79,8 +94,8 @@ int* CPU_usage(CPU * mem) {
 
     char buff[100];
     for(int i = 0; i < processor.numberOfCores; i++ ){
-	char cpuX[10];
-	sprintf(cpuX,"cpu%d",i);
+        char cpuX[10];
+        sprintf(cpuX,"cpu%d",i);
         while(1){
             if(fscanf(f,"%s",buff)==EOF){
                 fclose(f);
@@ -133,7 +148,7 @@ void cpuInit(CPU * mem) {
 
     char buff[100];
     for(int i = 0; i < processor.numberOfCores; i++ ){
-	char cpuX[10];
+        char cpuX[10];
         sprintf(cpuX,"cpu%d",i);
         while(1){
             if(fscanf(f,"%s",buff)==EOF){
