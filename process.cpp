@@ -17,7 +17,7 @@ int _cpu();
 
 process* initialization(const char * pid){
     process * proc = (process*)malloc(sizeof(process));
-    char path[20] = "/proc/";
+    char path[100] = "/proc/";
     strcat(path,pid);
     strcat(path,"/status");
     FILE * file = fopen(path,"r");
@@ -39,7 +39,7 @@ process* initialization(const char * pid){
             if(fscanf(file,"%s",buff)==EOF){
                 return NULL;
             }
-            strcpy(proc->name,buff);
+	    strncpy(proc->name,buff,sizeof(proc->name));
             continue;
         }
         if(!strcmp(buff,"State:")){
@@ -83,7 +83,6 @@ process* initialization(const char * pid){
     }
     fclose(file);
 
-
     strcpy(path,"/proc/");
     strcat(path,pid);
     strcat(path,"/stat");
@@ -92,18 +91,12 @@ process* initialization(const char * pid){
         return NULL;
     }
     for(int i = 0; i < 19;i++){
-        if(i == 18){
-            if(fscanf(file,"%s",buff)==EOF){
-                return NULL;
-            }
-            proc->priority = atoi(buff);
-            break;
-        }
         if(fscanf(file,"%s",buff)==EOF){
             return NULL;
         }
     }
     fclose(file);
+    proc->priority = atoi(buff);
 
     proc->procTime = _proc(pid);
 
@@ -257,7 +250,7 @@ float _proc(const char* pid){
     if(file == NULL){
         return 0;
     }
-    int utime, stime;
+    int utime = 0, stime = 0;
     for(int i = 0; i < 17;i++){
         if(i == 13){
             if(fscanf(file,"%s",buff)==EOF){

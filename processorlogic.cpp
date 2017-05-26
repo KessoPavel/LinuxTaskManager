@@ -79,8 +79,8 @@ int* CPU_usage(CPU * mem) {
 
     char buff[100];
     for(int i = 0; i < processor.numberOfCores; i++ ){
-        char cpuX[4];
-        sprintf(cpuX,"cpu%d",i);
+	char cpuX[10];
+	sprintf(cpuX,"cpu%d",i);
         while(1){
             if(fscanf(f,"%s",buff)==EOF){
                 fclose(f);
@@ -133,7 +133,7 @@ void cpuInit(CPU * mem) {
 
     char buff[100];
     for(int i = 0; i < processor.numberOfCores; i++ ){
-        char cpuX[4];
+	char cpuX[10];
         sprintf(cpuX,"cpu%d",i);
         while(1){
             if(fscanf(f,"%s",buff)==EOF){

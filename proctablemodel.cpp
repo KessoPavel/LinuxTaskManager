@@ -66,7 +66,7 @@ QVariant ProcTableModel::data(const QModelIndex &index, int role) const {
     }
     if( role == Qt::TextAlignmentRole){
         if(index.column() == 0 || index.column() == 1 || index.column() == 2 )
-            return Qt::AlignLeft;
+	    return unswer;
         return Qt::AlignCenter;
     }
     return QVariant();
@@ -126,7 +126,7 @@ bool ProcTableModel::setData(const QModelIndex &index, const QVariant &value, in
             this->procList.at(index.row())->cpu = atoi(value.toString().toStdString().c_str());
             break;
         case 5 :
-            strcpy(this->procList.at(index.row())->state,value.toString().toStdString().c_str());
+	    strcpy(this->procList.at(index.row())->state,value.toString().toStdString().c_str());
             break;
         case 6:
             this->procList.at(index.row())->memory = atoi(value.toString().toStdString().c_str());

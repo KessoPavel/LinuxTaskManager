@@ -26,7 +26,7 @@ CubeMainWindow::CubeMainWindow(QWidget *parent) :
     this->cpux = new QLabel *[getProcessorNumberOfCore()];
     this->cpuxP = new QProgressBar *[getProcessorNumberOfCore()];
     for(int i = 0; i < getProcessorNumberOfCore(); i++ ){
-        char c[5];
+	char c[20];
         sprintf(c,"cpu%d :", i);
         this->cpux[i] = new QLabel(c);
         this->cpux[i]->setMinimumWidth(40);
@@ -148,7 +148,7 @@ void CubeMainWindow::rehreshTable(){
         int mb = (totalRam-gb*1024*1024) /1024;
         int kb = (totalRam - (gb*1024*1024+mb*1024));
 
-        char Ram[50];
+	char Ram[100];
         sprintf(Ram,"%d Gb %d Mb %d Kb",gb,mb,kb);
 
         this->ui->TotalRAM->setText(Ram);
