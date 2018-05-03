@@ -1,6 +1,4 @@
-# course_project: Task manager for Linux 
-version 1.0 23/05/2017
-
+# Task manager for Linux 
 About:
 ---
 The simplest task manager, allowing you to view and kill processes running on your Linux.
@@ -9,4 +7,4 @@ It is possible to view information about the system, such as CPU load, used RAM.
 The program has a user-friendly interface implemented with Qt.
 ---
 Kesso Pavel 
-e-Mail : kessopol1998@gmail.com
+e-Mail :pavel.kesso@gmail.com
